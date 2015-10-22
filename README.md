@@ -1,6 +1,6 @@
 # [Xnova](https://xnova.github.io)
 
-[![Join the Atom Community on Slack](http://atom-slack.herokuapp.com/badge.svg)](http://atom-slack.herokuapp.com/)
+[![Join the Xnova Community on Slack](http://xnova-slack.herokuapp.com/badge.svg)](http://xnova-slack.herokuapp.com/)
 [![Build Status](https://travis-ci.org/atom/atom.svg?branch=master)](https://travis-ci.org/atom/atom)
 [![Dependency Status](https://david-dm.org/atom/atom.svg)](https://david-dm.org/atom/atom)
 
