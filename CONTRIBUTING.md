@@ -1,6 +1,6 @@
 # Contributing to Xnova
 
-Looking to contribute something to Bootstrap? **Here's how you can help**.
+Looking to contribute something to Xnova? **Here's how you can help**.
 
 Please take a moment to review this document in order to make the contribution process easy and effective for everyone involved.
 
