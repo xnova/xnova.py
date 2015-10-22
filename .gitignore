@@ -23,3 +23,8 @@
 *.sublime-workspace
 nbproject
 Thumbs.db
+
+#virtualenv
+venv
+*.pyc
+
