@@ -1,3 +1,11 @@
-from django.shortcuts import render
+from django.contrib.auth.models import User
+from rest_framework import viewsets
+from xnova.serializers import UserSerializer
 
-# Create your views here.
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing users.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

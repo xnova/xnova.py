@@ -27,4 +27,5 @@ Thumbs.db
 #virtualenv
 venv
 *.pyc
-
+.tox
+.coverage
