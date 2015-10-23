@@ -1,4 +1,23 @@
-from distutils.core import setup
+from distutils.core import setup, Command
+
+
+class TestCommand(Command):
+    description = "run package tests"
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        from xnova.tests.utils import run_tests
+
+        run_tests()
+
+
+cmdclass['test'] = TestCommand
 
 setup(
     name='xnova',
