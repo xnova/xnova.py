@@ -1,5 +1,7 @@
 from distutils.core import setup, Command
 
+cmdclass = {}
+
 
 class TestCommand(Command):
     description = "run package tests"
