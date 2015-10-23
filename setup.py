@@ -1,4 +1,7 @@
+import os
 from distutils.core import setup, Command
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'xnova.tests.settings'
 
 cmdclass = {}
 
