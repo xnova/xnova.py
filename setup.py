@@ -34,5 +34,6 @@ setup(
     url='https://github.com/xnova/xnova',  # use the URL to the github repo
     download_url='https://github.com/xnova/xnova/tarball/0.0.1',
     keywords=['xnova', 'django', 'ogame'],  # arbitrary keywords
-    classifiers=[]
+    classifiers=[],
+    cmdclass=cmdclass,
     )
