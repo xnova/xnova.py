@@ -1,8 +1,8 @@
 # [Xnova](https://xnova.github.io) [![Latest version](https://img.shields.io/pypi/v/xnova.svg)](https://pypi.python.org/pypi/xnova)
 
-[![Build Status](https://travis-ci.org/atom/atom.svg?branch=master)](https://travis-ci.org/atom/atom)
+[![Build Status](https://travis-ci.org/xnova/xnova.svg?branch=master)](https://travis-ci.org/xnova/xnova)
 [![Test coverage](https://coveralls.io/repos/jcassee/django-analytical/badge.svg)](https://coveralls.io/r/jcassee/django-analytical)
-[![Code health](https://landscape.io/github/jcassee/django-analytical/master/landscape.svg?style=flat)](https://landscape.io/github/jcassee/django-analytical/master)
+[![Code Health](https://landscape.io/github/xnova/xnova/master/landscape.svg?style=flat)](https://landscape.io/github/xnova/xnova/master)
 [![Monthly downloads from PyPI](https://img.shields.io/pypi/dm/xnova.svg)](https://pypi.python.org/pypi/xnova)
 [![Software license](https://img.shields.io/pypi/l/xnova.svg)](https://github.com/xnova/xnova/blob/master/LICENSE)
 [![Join the Xnova Community on Slack](http://xnova-slack.herokuapp.com/badge.svg)](http://xnova-slack.herokuapp.com/)
