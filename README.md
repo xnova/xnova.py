@@ -1,10 +1,10 @@
-# [Xnova](https://xnova.github.io) [![Latest version](https://img.shields.io/pypi/v/cookiecutter.svg)](https://pypi.python.org/pypi/cookiecutter)
+# [Xnova](https://xnova.github.io) [![Latest version](https://img.shields.io/pypi/v/xnova.svg)](https://pypi.python.org/pypi/xnova)
 
 [![Build Status](https://travis-ci.org/atom/atom.svg?branch=master)](https://travis-ci.org/atom/atom)
 [![Test coverage](https://coveralls.io/repos/jcassee/django-analytical/badge.svg)](https://coveralls.io/r/jcassee/django-analytical)
 [![Code health](https://landscape.io/github/jcassee/django-analytical/master/landscape.svg?style=flat)](https://landscape.io/github/jcassee/django-analytical/master)
-[![Monthly downloads from PyPI](https://img.shields.io/pypi/dm/django-analytical.svg)](https://pypi.python.org/pypi/django-analytical)
-[![Software license](https://img.shields.io/pypi/l/django-analytical.svg)](https://github.com/xnova/xnova/blob/master/LICENSE)
+[![Monthly downloads from PyPI](https://img.shields.io/pypi/dm/xnova.svg)](https://pypi.python.org/pypi/xnova)
+[![Software license](https://img.shields.io/pypi/l/xnova.svg)](https://github.com/xnova/xnova/blob/master/LICENSE)
 [![Join the Xnova Community on Slack](http://xnova-slack.herokuapp.com/badge.svg)](http://xnova-slack.herokuapp.com/)
 
 Xnova is an open source implementation of the browser game [OGame](https://en.wikipedia.org/wiki/OGame), coded in [Python](https://www.python.org) and built on [Django](https://www.djangoproject.com). We created it with the aim of allowing anyone with a basic knowledge have a OGame server running in 5 minutes.
