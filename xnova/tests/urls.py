@@ -19,5 +19,5 @@ from xnova import urls as xnova_urls
 
 urlpatterns = [
     # url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', include(xnova_urls)),
+    url(r'^', include(xnova_urls)),
 ]

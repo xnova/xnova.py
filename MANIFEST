@@ -6,4 +6,6 @@ setup.py
 xnova/__init__.py
 xnova/admin.py
 xnova/models.py
+xnova/serializers.py
+xnova/urls.py
 xnova/views.py
