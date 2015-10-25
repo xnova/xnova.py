@@ -7,6 +7,12 @@ class UserRegisterTest(TestCase):
     def setUp(self):
         self.client = APIClient()
 
+    def check_for_username_in_response(self, username, response):
+        content = response.content.decode()
+        root = json.loads(content)
+        users = root['data']
+        self.assertIn(username, [user.name for user in users])
+
     def test_can_register_and_retrieve_it_later(self):
         """
         Ensure we can create a new user.
@@ -27,12 +33,7 @@ class UserRegisterTest(TestCase):
 
         # fetch list
         response = self.client.get(url, format='json')
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # self.assertEqual(response['content-type'], 'application/vnd.api+json')
-        content = response.content.decode()
-        root = json.loads(content)
-        users = root['data']
-        self.assertIn('NewUser', [user.name for user in users])
+        self.check_for_username_in_response('NewUser', response)
 
         # register another user
         content = {
@@ -46,11 +47,5 @@ class UserRegisterTest(TestCase):
 
         # fetch list
         response = self.client.get(url, format='json')
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # self.assertEqual(response['content-type'], 'application/vnd.api+json')
-        content = response.content.decode()
-        root = json.loads(content)
-        users = root['data']
-        self.assertIn('NewUser', [user.name for user in users])
-        self.assertIn('AnotherUser', [user.name for user in users])
-
+        self.check_for_username_in_response('NewUser', response)
+        self.check_for_username_in_response('AnotherUser', response)
