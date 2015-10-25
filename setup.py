@@ -24,19 +24,21 @@ class TestCommand(Command):
 
 cmdclass['test'] = TestCommand
 
+import xnova
+
 setup(
     name='xnova',
-    packages=['xnova'],  # this must be the same as the name above
-    version='0.0.1',
+    version=xnova.__version__,
+    license=xnova.__license__,
     description='Xnova is an open source implementation of the browser game'
                 'OGame',
     long_description=open('README.md').read(),
-    license='GPLv3',
-    author='Rafel Arquero',
-    author_email='rafael@arque.ro',
+    author=xnova.__author__,
+    author_email=xnova.__email__,
+    packages=['xnova'],  # this must be the same as the name above
+    keywords=['xnova', 'django', 'ogame'],
+    classifiers=[],  # TODO(arkeros)
     url='https://github.com/xnova/xnova',  # use the URL to the github repo
     download_url='https://github.com/xnova/xnova/tarball/0.0.1',
-    keywords=['xnova', 'django', 'ogame'],  # arbitrary keywords
-    classifiers=[],
     cmdclass=cmdclass,
     )

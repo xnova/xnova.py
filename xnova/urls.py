@@ -13,11 +13,9 @@ Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
+from django.conf.urls import url
+from xnova import views
 
-from rest_framework import routers
-from xnova.views import UserViewSet
-
-router = routers.SimpleRouter()
-router.register(r'users', UserViewSet)
-# router.register(r'accounts', AccountViewSet)
-urlpatterns = router.urls
+urlpatterns = [
+    url(r'^users/', views.user_list, name='user-list'),
+]

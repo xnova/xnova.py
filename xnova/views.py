@@ -1,11 +1,30 @@
-from django.contrib.auth.models import User
-from rest_framework import viewsets
-from xnova.serializers import UserSerializer
+import json
+from django.core.serializers.json import DjangoJSONEncoder
+from django.http import HttpResponse
 
 
-class UserViewSet(viewsets.ModelViewSet):
+def user_list(request):
     """
-    A simple ViewSet for viewing and editing users.
+    :type request: rest_framework.
+    :rtype: HttpResponse
     """
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    encoder = DjangoJSONEncoder()
+    if request.method == 'POST':
+        content = json.loads(request.body)
+        return HttpResponse(encoder.encode(
+            {
+                'data': {
+                    'type': 'users',
+                    'name': content['data']['name'],
+                    'email': content['data']['email'],
+                }
+            }
+        ))
+    # if request.method == 'POST':
+    #     return HttpResponse(status=201, content_type='application/vnd.api+json')
+
+    # return HttpResponse(encoder.encode([]),
+    #                     status=200,
+    #                     content_type='application/vnd.api+json')
+    return HttpResponse(encoder.encode({'data': []}),
+                        content_type='application/vnd.api+json')
