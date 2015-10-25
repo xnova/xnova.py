@@ -1,4 +1,5 @@
 import json
+
 from django.test.testcases import TestCase
 from rest_framework.test import APIClient
 
@@ -43,8 +44,13 @@ class PlayerRegisterTest(TestCase):
 
         # fetch list
         response = self.client.get('/players/', format='json')
+        content = response.content.decode()
+        root = json.loads(content)
         self.check_for_username_in_response('NewPlayer', response)
         self.check_for_username_in_response('AnotherPlayer', response)
+        first_link = root['data'][0]['links']['self']
+        second_link = root['data'][1]['links']['self']
+        self.assertNotEqual(first_link, second_link)
 
     def test_cannot_register_same_name_players(self):
         self.request_create_player('AwesomeName', 'awesome@example.com',
@@ -73,3 +79,16 @@ class PlayerRegisterTest(TestCase):
         self.assertEqual(
             root['errors'][0]['source'],
             {'pointer': '/data/attributes/email'})
+
+    def test_can_register_and_retrieve_homeplanet(self):
+        response = self.request_create_player(
+            'NewPlayer', 'new@example.com', 'password')
+        content = response.content.decode()
+        root = json.loads(content)
+        player_link = root['data']['links']['self']
+
+        response = self.client.get(player_link, format='json')
+        content = response.content.decode()
+        root = json.loads(content)
+        homeplanet_link = root['data']['relationships']['homeplanet']['links']['self']
+        self.fail()

@@ -17,5 +17,7 @@ from django.conf.urls import url
 from xnova import views
 
 urlpatterns = [
-    url(r'^players/', views.player_list, name='player-list'),
+    url(r'^players/$', views.player_list, name='player-list'),
+    url(r'^players/(.+)/$', views.player_detail,
+        name='player-detail'),
 ]

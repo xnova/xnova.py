@@ -5,7 +5,7 @@ from django.core.urlresolvers import resolve
 from django.db import IntegrityError
 from django.test import TestCase
 from rest_framework.test import APITestCase
-from xnova.views import player_list
+from xnova.views import player_list, player_detail
 
 
 class PlayerListTest(APITestCase):
@@ -31,6 +31,10 @@ class PlayerListTest(APITestCase):
                              "If a document does not contain a top-level data "
                              "key, the included member MUST NOT be present "
                              "either.")
+        elif isinstance(root['data'], dict):
+            if 'links' in root['data'].keys():
+                self.assertIsInstance(root['data']['links'], dict)
+
         if 'errors' in root:
             self.assertTrue(400 <= response.status_code < 600)
             self.assertIsInstance(root['errors'], list)
@@ -61,17 +65,11 @@ class PlayerListTest(APITestCase):
         self.assertEqual(new_user.username, 'PostUser')
         self.assertEqual(new_user.email, 'post@example.com')
 
-        self.assertIn('PostUser', response.content.decode())
-        expected_json = {
-            'data': {
-                'type': 'users',
-                'attributes': {
-                    'name': 'PostUser',
-                    'email': 'post@example.com'
-                }
-            }
-        }
-        self.assertJSONEqual(response.content.decode(), expected_json)
+        content = response.content.decode()
+        root = json.loads(content)
+        attributes = root['data']['attributes']
+        self.assertEqual('PostUser', attributes['name'])
+        self.assertEqual('post@example.com', attributes['email'])
 
     def test_returns_data_array(self):
         response = self.client.get('/players/', format='json')
@@ -86,16 +84,24 @@ class PlayerListTest(APITestCase):
         User.objects.create_user('Bob', email='bob@example.com')
 
         response = self.client.get('/players/', format='json')
-        content = json.loads(response.content.decode())
+        root = json.loads(response.content.decode())
 
         self.assertEqual({
             'name': 'Alice',
             'email': 'alice@example.com'
-        }, content['data'][0]['attributes'])
+        }, root['data'][0]['attributes'])
         self.assertEqual({
             'name': 'Bob',
             'email': 'bob@example.com'
-        }, content['data'][1]['attributes'])
+        }, root['data'][1]['attributes'])
+        self.assertIn('links', root['data'][0].keys())
+        self.assertIn('links', root['data'][1].keys())
+        self.assertIsInstance(root['data'][0]['links'], dict)
+        self.assertIsInstance(root['data'][1]['links'], dict)
+        self.assertIn('self', root['data'][0]['links'].keys())
+        self.assertIn('self', root['data'][1]['links'].keys())
+        self.assertNotEqual(root['data'][0]['links']['self'],
+                            root['data'][1]['links']['self'])
 
     def test_doesnt_throw_exception_unique_username(self):
         data = {
@@ -202,6 +208,75 @@ class PlayerListTest(APITestCase):
             {'pointer': '/data/attributes/email'}
         )
 
+    def test_return_valid_jsonapi_after_creating(self):
+        data = {
+            'data': {
+                'type': 'players',
+                'attributes': {
+                    'name': 'APlayer',
+                    'email': 'normal@email.com',
+                    'password': 'password'
+                }
+            }
+        }
+        response = self.client.post('/players/', data, format='json')
+        self.check_is_valid_jsonapi(response)
+
+    def test_return_self_link_after_creating(self):
+        data = {
+            'data': {
+                'type': 'players',
+                'attributes': {
+                    'name': 'Alice',
+                    'email': 'awesome@mail.com',
+                    'password': 'password'
+                }
+            }
+        }
+        response = self.client.post('/players/', data, format='json')
+
+        content = response.content.decode()
+        root = json.loads(content)
+        data = root['data']
+        self.assertIn('links', data.keys())
+        self.assertIn('self', data['links'].keys())
+        self_id = root['data']['id']
+        self_link = data['links']['self']
+        correct_link = '/players/%d/' % (self_id,)
+        self.assertEqual(self_link, correct_link)
+
+        response = self.client.get('/players/', format='json')
+        content = response.content.decode()
+        root = json.loads(content)
+        self_link = root['data'][0]['links']['self']
+        self.assertEqual(self_link, correct_link)
+
+
+class PlayerDetailViewTest(APITestCase):
+    def test_players_id_url_resolves_to_player_detail_view(self):
+        found = resolve('/players/5/')
+        self.assertEqual(found.func, player_detail)
+
+    def test_displays_correct_player(self):
+        correct_player = User.objects.create_user(username='DetailUser')
+        User.objects.create_user(username='SecondUser')
+
+        response = self.client.get('/players/%d/' % (correct_player.id,))
+
+        self.assertContains(response, 'DetailUser')
+        self.assertNotContains(response, 'SecondUser')
+
+    def test_related_to_homeplanet(self):
+        user = User.objects.create_user(username='SecondUser')
+
+        response = self.client.get('/players/%d/' % (user.id,))
+        content = response.content.decode()
+        root = json.loads(content)
+        self.assertIn('relationships', root['data'].keys())
+        self.assertIsInstance(root['data']['relationships'], dict)
+        self.assertIn('homeplanet', root['data']['relationships'].keys())
+        homeplanet = root['data']['relationships']['homeplanet']
+
 
 class UserModelTest(TestCase):
     def test_creating_and_retrieving_users(self):
@@ -215,3 +290,5 @@ class UserModelTest(TestCase):
         second_saved_user = saved_users[1]
         self.assertEqual(first_saved_user.username, 'First (ever) User')
         self.assertEqual(second_saved_user.username, 'User the second')
+
+
