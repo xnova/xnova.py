@@ -4,7 +4,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
 
 
-def user_list(request):
+def player_list(request):
     """
     :type request: rest_framework.
     :rtype: HttpResponse
@@ -14,16 +14,26 @@ def user_list(request):
     if request.method == 'POST':
         content = json.loads(request.body)
         attributes = content['data']['attributes']
-        User.objects.create_user(attributes['name'])
-        return HttpResponse(encoder.encode({
-            'data': {
-                'type': 'users',
-                'attributes': {
-                    'name': attributes['name'],
-                    'email': attributes['email'],
+        try:
+            User.objects.create_user(attributes['name'])
+            return HttpResponse(encoder.encode({
+                'data': {
+                    'type': 'users',
+                    'attributes': {
+                        'name': attributes['name'],
+                        'email': attributes['email'],
+                    }
                 }
-            }
-        }))
+            }))
+        except Exception, e:
+            return HttpResponse(
+                encoder.encode({'errors': [{
+                    'detail': 'A user with the same name already exists',
+                    'source': {'pointer': '/data/attributes/name'}
+                }]}),
+                status=400,
+                content_type='application/vnd.api+json'
+            )
 
     users = User.objects.all()
     data = [{'attributes': {
