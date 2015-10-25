@@ -51,7 +51,7 @@ class UserListTest(TestCase):
         response = user_list(request)
 
         self.assertEqual(User.objects.count(), 1)
-        new_user = User.objects.first()
+        new_user = User.objects.all()[0]  # .first() doesnt work in django1.5
         self.assertEqual(new_user.username, 'PostUser')
 
         self.assertIn('PostUser', response.content.decode())
