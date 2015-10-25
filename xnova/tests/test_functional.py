@@ -7,6 +7,18 @@ class PlayerRegisterTest(TestCase):
     def setUp(self):
         self.client = APIClient()
 
+    def request_create_player(self, name, email, password):
+        return self.client.post('/players/', {
+            'data': {
+                'type': 'players',
+                'attributes': {
+                    'name': name,
+                    'email': email,
+                    'password': password
+                }
+            }
+        }, format='json')
+
     def check_for_username_in_response(self, username, response):
         content = response.content.decode()
         root = json.loads(content)
@@ -17,57 +29,28 @@ class PlayerRegisterTest(TestCase):
         """
         Ensure we can create a new user.
         """
-        url = '/players/'
 
-        # push user
-        content = {
-            'data': {
-                'type': 'players',
-                'attributes': {
-                    'name': 'NewPlayer',
-                    'email': 'new@example.com',
-                    'password': 'password'
-                }
-            }
-        }
-        response = self.client.post(url, content, format='json')
+        # push player
+        response = self.request_create_player(
+            'NewPlayer', 'new@example.com', 'password')
         content = response.content.decode()
         root = json.loads(content)
         self.assertEqual(root['data']['attributes']['name'], 'NewPlayer')
 
-        # register another user
-        content = {
-            'data': {
-                'type': 'players',
-                'attributes': {
-                    'name': 'AnotherPlayer',
-                    'email': 'another@example.com',
-                    'password': 'password'
-                }
-            }
-        }
-        self.client.post(url, content, format='json')
+        # register another player
+        self.request_create_player(
+            'AnotherPlayer', 'another@example.com', 'password')
 
         # fetch list
-        response = self.client.get(url, format='json')
+        response = self.client.get('/players/', format='json')
         self.check_for_username_in_response('NewPlayer', response)
         self.check_for_username_in_response('AnotherPlayer', response)
 
     def test_cannot_register_same_name_players(self):
-        url = '/players/'
-        content = {
-            'data': {
-                'type': 'players',
-                'attributes': {
-                    'name': 'AwesomeName',
-                    'email': 'awesome@example.com',
-                    'password': 'password'
-                }
-            }
-        }
-        self.client.post(url, content, format='json')
-        content['data']['attributes']['email'] = 'another@email.com'
-        response = self.client.post(url, content, format='json')
+        self.request_create_player(
+            'AwesomeName', 'awesome@example.com', 'password')
+        response = self.request_create_player(
+            'AwesomeName', 'another@example.com', 'password')
         content = response.content.decode()
         root = json.loads(content)
         # self.assertEqual(root['errors'][0]['status'], '422')
