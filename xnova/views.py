@@ -1,4 +1,5 @@
 import json
+from django.contrib.auth.models import User
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
 
@@ -9,22 +10,27 @@ def user_list(request):
     :rtype: HttpResponse
     """
     encoder = DjangoJSONEncoder()
+
     if request.method == 'POST':
         content = json.loads(request.body)
-        return HttpResponse(encoder.encode(
-            {
-                'data': {
-                    'type': 'users',
-                    'name': content['data']['name'],
-                    'email': content['data']['email'],
+        attributes = content['data']['attributes']
+        User.objects.create_user(attributes['name'])
+        return HttpResponse(encoder.encode({
+            'data': {
+                'type': 'users',
+                'attributes': {
+                    'name': attributes['name'],
+                    'email': attributes['email'],
                 }
             }
-        ))
-    # if request.method == 'POST':
-    #     return HttpResponse(status=201, content_type='application/vnd.api+json')
+        }))
 
-    # return HttpResponse(encoder.encode([]),
-    #                     status=200,
-    #                     content_type='application/vnd.api+json')
-    return HttpResponse(encoder.encode({'data': []}),
-                        content_type='application/vnd.api+json')
+    users = User.objects.all()
+    data = [{'attributes': {
+        'name': user.username,
+        'email': user.email
+    }} for user in users]
+    return HttpResponse(
+        encoder.encode({'data': data}),
+        content_type='application/vnd.api+json'
+    )
