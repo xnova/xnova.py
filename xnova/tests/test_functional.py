@@ -47,8 +47,8 @@ class PlayerRegisterTest(TestCase):
         self.check_for_username_in_response('AnotherPlayer', response)
 
     def test_cannot_register_same_name_players(self):
-        self.request_create_player(
-            'AwesomeName', 'awesome@example.com', 'password')
+        self.request_create_player('AwesomeName', 'awesome@example.com',
+                                   'password')
         response = self.request_create_player(
             'AwesomeName', 'another@example.com', 'password')
         content = response.content.decode()
@@ -56,7 +56,20 @@ class PlayerRegisterTest(TestCase):
         # self.assertEqual(root['errors'][0]['status'], '422')
         self.assertEqual(
             root['errors'][0]['detail'],
-            'A user with the same name already exists')
+            'A player with the same name already exists')
         self.assertEqual(
             root['errors'][0]['source'],
             {'pointer': '/data/attributes/name'})
+
+    def test_cannot_register_same_email_players(self):
+        self.request_create_player('PlayerA', 'admin@example.com', 'password')
+        response = self.request_create_player('PlayerB', 'admin@example.com',
+                                              'password')
+        content = response.content.decode()
+        root = json.loads(content)
+        self.assertEqual(
+            root['errors'][0]['detail'],
+            'A player with the same email already exists')
+        self.assertEqual(
+            root['errors'][0]['source'],
+            {'pointer': '/data/attributes/email'})

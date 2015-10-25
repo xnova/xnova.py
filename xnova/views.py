@@ -14,8 +14,18 @@ def player_list(request):
     if request.method == 'POST':
         content = json.loads(request.body)
         attributes = content['data']['attributes']
+        if User.objects.filter(email=attributes['email']).count():
+            return HttpResponse(
+                encoder.encode({'errors': [{
+                    'detail': 'A player with the same email already exists',
+                    'source': {'pointer': '/data/attributes/email'}
+                }]}),
+                status=400,
+                content_type='application/vnd.api+json')
         try:
-            User.objects.create_user(attributes['name'])
+            User.objects.create_user(
+                attributes['name'],
+                email=attributes['email'])
             return HttpResponse(encoder.encode({
                 'data': {
                     'type': 'users',
@@ -28,7 +38,7 @@ def player_list(request):
         except Exception, e:
             return HttpResponse(
                 encoder.encode({'errors': [{
-                    'detail': 'A user with the same name already exists',
+                    'detail': 'A player with the same name already exists',
                     'source': {'pointer': '/data/attributes/name'}
                 }]}),
                 status=400,

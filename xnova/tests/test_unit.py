@@ -1,11 +1,10 @@
 import json
+
 from django.contrib.auth.models import User
 from django.core.urlresolvers import resolve
 from django.db import IntegrityError
 from django.test import TestCase
-from rest_framework import status
 from rest_framework.test import APITestCase
-
 from xnova.views import player_list
 
 
@@ -35,16 +34,17 @@ class PlayerListTest(APITestCase):
         if 'errors' in root:
             self.assertTrue(400 <= response.status_code < 600)
             self.assertIsInstance(root['errors'], list)
+            self.assertGreater(len(root['errors']), 0)
             for error in root['errors']:
                 self.assertIsInstance(error, dict)
 
     # TODO
     # jsonapi.org
-    def test_player_list_returns_valid_jsonapi(self):
+    def test_returns_valid_jsonapi(self):
         response = self.client.get('/players/', format='json')
         self.check_is_valid_jsonapi(response)
 
-    def test_player_list_can_save_a_POST_request(self):
+    def test_can_save_a_POST_request(self):
         response = self.client.post('/players/', {
             'data': {
                 'type': 'users',
@@ -59,6 +59,7 @@ class PlayerListTest(APITestCase):
         self.assertEqual(User.objects.count(), 1)
         new_user = User.objects.all()[0]  # .first() doesnt work in django1.5
         self.assertEqual(new_user.username, 'PostUser')
+        self.assertEqual(new_user.email, 'post@example.com')
 
         self.assertIn('PostUser', response.content.decode())
         expected_json = {
@@ -72,7 +73,7 @@ class PlayerListTest(APITestCase):
         }
         self.assertJSONEqual(response.content.decode(), expected_json)
 
-    def test_player_list_returns_data_array(self):
+    def test_returns_data_array(self):
         response = self.client.get('/players/', format='json')
 
         content = response.content.decode()
@@ -80,7 +81,7 @@ class PlayerListTest(APITestCase):
         self.assertIn('data', root.keys())
         self.assertIsInstance(root['data'], list)
 
-    def test_player_list_displays_all_players_attributes(self):
+    def test_displays_all_players_attributes(self):
         User.objects.create_user('Alice', email='alice@example.com')
         User.objects.create_user('Bob', email='bob@example.com')
 
@@ -96,7 +97,7 @@ class PlayerListTest(APITestCase):
             'email': 'bob@example.com'
         }, content['data'][1]['attributes'])
 
-    def test_player_list_doesnt_throw_exception_unique_username(self):
+    def test_doesnt_throw_exception_unique_username(self):
         data = {
             'data': {
                 'type': 'players',
@@ -109,11 +110,12 @@ class PlayerListTest(APITestCase):
         }
         try:
             self.client.post('/players/', data, format='json')
+            data['data']['attributes']['email'] = 'other@mail.com'
             self.client.post('/players/', data, format='json')
         except IntegrityError, e:
             self.assertNotIn('auth_user.username', e.message)
 
-    def test_player_list_returns_valid_jsonapi_when_same_username(self):
+    def test_returns_valid_jsonapi_when_same_username(self):
         data = {
             'data': {
                 'type': 'players',
@@ -125,10 +127,11 @@ class PlayerListTest(APITestCase):
             }
         }
         self.client.post('/players/', data, format='json')
+        data['data']['attributes']['email'] = 'another@email.com'
         response = self.client.post('/players/', data, format='json')
         self.check_is_valid_jsonapi(response)
 
-    def test_player_list_returns_errors_when_same_username(self):
+    def test_returns_errors_when_same_username(self):
         data = {
             'data': {
                 'type': 'players',
@@ -140,20 +143,64 @@ class PlayerListTest(APITestCase):
             }
         }
         self.client.post('/players/', data, format='json')
+        data['data']['attributes']['email'] = 'another@email.com'
         response = self.client.post('/players/', data, format='json')
         content = response.content.decode()
         root = json.loads(content)
         self.assertIn('errors', root.keys())
-        self.assertGreater(len(root['errors']), 0)
         self.assertEqual(
             root['errors'][0]['source'],
             {'pointer': '/data/attributes/name'}
         )
         self.assertEqual(
             root['errors'][0]['detail'],
-            'A user with the same name already exists'
+            'A player with the same name already exists'
         )
 
+    def test_returns_valid_jsonapi_when_same_email(self):
+        data = {
+            'data': {
+                'type': 'players',
+                'attributes': {
+                    'name': 'APlayer',
+                    'email': 'incredible@email.com',
+                    'password': 'password'
+                }
+            }
+        }
+        self.client.post('/players/', data, format='json')
+        data['data']['attributes']['name'] = 'AnotherPlayer'
+        response = self.client.post('/players/', data, format='json')
+        self.check_is_valid_jsonapi(response)
+
+    def test_returns_errors_when_same_email(self):
+        data = {
+            'data': {
+                'type': 'players',
+                'attributes': {
+                    'name': 'Alice',
+                    'email': 'awesome@mail.com',
+                    'password': 'password'
+                }
+            }
+        }
+        response = self.client.post('/players/', data, format='json')
+        content = response.content.decode()
+        root = json.loads(content)
+        self.assertIn('data', root.keys())
+        data['data']['attributes']['name'] = 'Bob'
+        response = self.client.post('/players/', data, format='json')
+        content = response.content.decode()
+        root = json.loads(content)
+        self.assertIn('errors', root.keys())
+        self.assertEqual(
+            root['errors'][0]['detail'],
+            'A player with the same email already exists'
+        )
+        self.assertEqual(
+            root['errors'][0]['source'],
+            {'pointer': '/data/attributes/email'}
+        )
 
 
 class UserModelTest(TestCase):
