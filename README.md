@@ -13,8 +13,8 @@ Visit [xnova.io](https://xnova.github.io) to learn more or visit the [Xnova foru
 
 Follow [@xnovaproject](https://twitter.com/xnovaproject) on Twitter for important announcements.
 
-This project adheres to the [Contributor Covenant 1.2](http://contributor-covenant.org/version/1/2/0).
-By participating, you are expected to uphold this code. Please report unacceptable behavior to xnova@omegan.net.
+This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDUCT.md).
+By participating, you are expected to uphold this code. Please report unacceptable behavior to admin@xnova.io.
 
 ## Installing
 
