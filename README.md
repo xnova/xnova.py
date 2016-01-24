@@ -1,4 +1,4 @@
-# [Xnova](https://xnova.github.io) [![Latest version](https://img.shields.io/pypi/v/xnova.svg)](https://pypi.python.org/pypi/xnova)
+# [Xnova](https://xnova.io) [![Latest version](https://img.shields.io/pypi/v/xnova.svg)](https://pypi.python.org/pypi/xnova)
 
 [![Build Status](https://travis-ci.org/xnova/xnova.svg?branch=master)](https://travis-ci.org/xnova/xnova)
 [![Coverage Status](https://coveralls.io/repos/xnova/xnova/badge.svg?branch=master&service=github)](https://coveralls.io/github/xnova/xnova?branch=master)
@@ -9,7 +9,7 @@
 
 Xnova is an open source implementation of the browser game [OGame](https://en.wikipedia.org/wiki/OGame), coded in [Python](https://www.python.org) and built on [Django](https://www.djangoproject.com). We created it with the aim of allowing anyone with a basic knowledge have a OGame server running in 5 minutes.
 
-Visit [xnova.io](https://xnova.github.io) to learn more or visit the [Xnova forum](https://discuss.xnova.io).
+Visit [xnova.io](https://xnova.io) to learn more or visit the [Xnova forum](https://discuss.xnova.io).
 
 Follow [@xnovaproject](https://twitter.com/xnovaproject) on Twitter for important announcements.
 
